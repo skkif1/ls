@@ -27,18 +27,17 @@ typedef struct	s_item
 {
     char *path;
     struct dirent *item;
-    int *minor_s_major;
+    char *minor_s_major;
     char *type;
     char *perm;
     char *x_atr;
-    char *n_link;
+    int   n_link;
     char *o_name;
     char *g_name;
-    char *size;
+    int   size;
     char *time;
     char *name;
     struct stat stat;
-    int paddings[5];
 }				t_item;
 
 
@@ -57,4 +56,12 @@ int if_dir_present(t_list *list);
 int print_folder_info(char *path);
 void print_folder(t_folder *folder);
 t_list *concat(int argc, char **argv);
+char* get_file_type(struct stat item_inf);
+char *get_permissions(struct stat item_inf);
+char *get_x_atr(t_item *diritem, struct stat item_inf);
+char* get_owner_name(struct stat item_inf);
+char* get_group_name(struct stat item_inf);
+char *get_name(t_item *diritem, struct stat item_inf);
+char* get_modif_time(struct stat item_inf);
+
 #endif

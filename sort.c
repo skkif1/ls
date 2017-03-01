@@ -86,11 +86,12 @@ t_list *sort_list(t_list *begin)
 {
     void (*f)(t_list *elem);
     t_list *temp;
-
     if (ft_strchr(g_flags, 't'))
         f = time_order;
+    else
     if (ft_strchr(g_flags, 'r'))
         f = rev_order;
+    else
     if (ft_strchr(g_flags, 'U'))
         f = time_creation_order;
     else

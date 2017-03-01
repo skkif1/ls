@@ -30,7 +30,6 @@ static int count_total(t_list *item_list)
     while (list)
     {
         item = list->content;
-        int temp = (int)item->stat.st_blocks;
         count += (int)item->stat.st_blocks;
         list = list->next;
     }
@@ -46,10 +45,14 @@ static t_folder *get_folder_info(char *path)
     folder = opendir(path);
     folder_s->folder = folder;
     if (folder == NULL)
+    {
+        folder_s->item_list = NULL;
         return folder_s;
-    t_list *list = parse_folder(folder_s);
+    }
+        t_list *list = parse_folder(folder_s);
     folder_s->item_list = list;
     folder_s->total = count_total(folder_s->item_list);
+    //
     return folder_s;
 }
 
@@ -85,7 +88,7 @@ static void print_recurent(char *path)
         if (folder_t->folder == 0)
         {
             opendir(folder_t->path);
-            printf("\n%s %s\n", ft_strjoin("cd: ", path), strerror(errno));
+            printf("\n%s %s\n", ft_strjoin("ls: ", path), strerror(errno));
         }
         if (folder_t->item_list != NULL)
             print_folder(folder_t);

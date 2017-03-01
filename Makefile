@@ -11,25 +11,27 @@
 #******************************************************************************#
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror
-NAME = ft_ls.a
 
-SRCFLS = ft_ls.c print.c sort.c
 
-PRINTF_OBJ = $(subst .c,.o,$(PRINTF_SRC))
-OBJECTS = $(subst .c,.o,$(SRCFLS))
-SRC_C = $(SRCFLS:%=libft/%) $(PRINTF_SRC)
-SRC_O = $(SRC_C:.c=.o) $(PRINTF_OBJ)
+NAME = ft_ls
+
+FT_LS_SRC = ft_ls.c print.c sort.c util.c get_info.c parse_param.c \
+            get_attributes.c get_attributes_n.c parse_folder.c
+
+OBJECTS = $(subst .c,.o,$(FT_LS_SRC))
+
 all: $(NAME)
 
-$(NAME): $(SRC_O)
-	ar rc $(NAME) $(SRC_O)
-	ranlib $(NAME)
+$(NAME):
+	make -C libft
+	gcc -o $(NAME) $(FT_LS_SRC) libft/*.o
 
-$(OBJECT): $(SRC_C)
-	gcc -Wall -Wextra -Werror -c $(SRC_C)
 clean:
-	/bin/rm -f $(SRC_O)
+	make clean -C libft
+	rm -f OBJECTS
+
 fclean: clean
-	/bin/rm -f $(NAME)
+	make fclean -C libft
+	rm -f $(NAME)
+
 re: fclean all

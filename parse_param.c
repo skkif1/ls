@@ -27,8 +27,8 @@ static void check_param(void)
             && *temp != 'r' && *temp != 't' && *temp != '-')
         {
             printf("ls: illigal option -- %c\n", *temp);
-            printf("usage: ls [-lRart] [file...]\n");
-            exit(-1);
+            printf("usage: ls [-lRartU] [file...]\n");
+            exit(1);
         }
         temp++;
     }
