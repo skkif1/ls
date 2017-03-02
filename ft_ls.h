@@ -47,7 +47,6 @@ typedef struct	s_folder
     t_list *item_list;
     DIR* folder;
     int total;
-    char *name;
 }				t_folder;
 
 t_list *parse_folder(t_folder *folder_s);
@@ -63,5 +62,11 @@ char* get_owner_name(struct stat item_inf);
 char* get_group_name(struct stat item_inf);
 char *get_name(t_item *diritem, struct stat item_inf);
 char* get_modif_time(struct stat item_inf);
+char *get_folder_name(char *str);
+char *get_root(char *str);
+void free_folder(void* f_folder, size_t size);
+void get_header(t_list *g_list);
+
+
 
 #endif
