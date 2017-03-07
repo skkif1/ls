@@ -22,12 +22,12 @@ char* get_modif_time(struct stat item_inf)
     current = time(&current);
     perm = current - item_inf.st_mtimespec.tv_sec;
     temp = ctime(&item_inf.st_mtimespec.tv_sec);
-    if (perm < 15552000 && perm > 0)
+    if (perm < 15552000 || perm < 0)
         time_s = ft_strsub(temp, 4, 12);
     else
     {
         time_s = ft_strsub(temp, 4, 7);
-        time_s = ft_append(time_s, ft_strsub(temp, 20, 23), ft_strlen(time_s), 4);
+        time_s = ft_append(time_s, ft_strsub(temp, 20, 24), ft_strlen(time_s), 5);
     }
     return time_s;
 }

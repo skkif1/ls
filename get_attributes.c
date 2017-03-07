@@ -24,7 +24,8 @@ char* get_file_type(struct stat item_inf) {
     type[0] = (char) ((S_ISFIFO(item_inf.st_mode)) ? 'p' : type[0]);
     type[0] = (char) ((S_ISSOCK(item_inf.st_mode)) ? 's' : type[0]);
     type[0] = (char) ((S_ISLNK(item_inf.st_mode)) ? 'l' : type[0]);
-    return (type);
+    result = ft_strdup(type);
+    return (result);
 }
 
 char *get_permissions(struct stat item_inf)

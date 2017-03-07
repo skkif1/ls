@@ -18,7 +18,6 @@
 t_list *g_list;
 char *g_flags;
 char *g_path;
-t_list *g_temp;
 
 static int count_total(t_list *item_list)
 {
@@ -42,7 +41,7 @@ static t_folder *get_folder_info(char *path)
     DIR *folder;
 
     folder_s = (t_folder*)malloc(sizeof(t_folder));
-    folder_s->path = ft_strdup(path);
+    folder_s->path = path;
     folder = opendir(path);
     folder_s->folder = folder;
     if (folder == NULL)
@@ -53,6 +52,7 @@ static t_folder *get_folder_info(char *path)
         t_list *list = parse_folder(folder_s);
     folder_s->item_list = list;
     folder_s->total = count_total(folder_s->item_list);
+    //
     return folder_s;
 }
 
@@ -68,13 +68,12 @@ static int not_system(char *str)
 
 static void print_recurent(char *path)
 {
-    t_item   *item;
+    t_item *item;
     t_folder *folder_t;
-    t_list   *list;
+    t_list *list;
 
     folder_t = get_folder_info(path);
     ft_lstadd_end(&g_list, ft_lstnew(folder_t, sizeof(*folder_t)));
-    get_header(g_list);
     list = folder_t->item_list;
     while (list)
     {
@@ -86,9 +85,13 @@ static void print_recurent(char *path)
     while (g_list)
     {
         folder_t = g_list->content;
-        if (folder_t->folder == 0 && opendir(folder_t->path) == NULL)
-            printf("\n%s %s\n", ft_strjoin("ls: ", get_folder_name(folder_t->path)), strerror(errno));
-        print_folder(folder_t);
+        if (folder_t->folder == 0)
+        {
+            opendir(folder_t->path);
+            printf("\n%s %s\n", ft_strjoin("ls: ", path), strerror(errno));
+        }
+        if (folder_t->item_list != NULL)
+            print_folder(folder_t);
         g_list = g_list->next;
     }
 }
@@ -97,18 +100,14 @@ int print_folder_info(char *path)
 {
     t_folder *folder_s;
 
+
     if (ft_strchr(g_flags, 'R'))
+    {
         print_recurent(path);
-    else
+    }else
     {
         folder_s = get_folder_info(path);
         print_folder(folder_s);
-    }
-
-    while (g_temp)
-    {
-        free_folder(g_temp->content, sizeof(folder_s));
-        g_temp = g_temp->next;
     }
     return 0;
 }

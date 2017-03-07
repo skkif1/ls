@@ -11,11 +11,10 @@
 /* ************************************************************************** */
 
 #include "ft_ls.h"
-
+#include <stdio.h>
 
 char *g_flags;
 char *g_path;
-char *g_root;
 
 void size_padding(t_item *item, int *paddings)
 {
@@ -60,7 +59,7 @@ static int *get_paddings(t_list *item_list)
     return paddings;
 }
 
-static void print_item_info(t_item *item, int *paddings)
+static void print_item_info(t_item *item, int total, int *paddings)
 {
     if (ft_strchr(g_flags, 'l'))
     {
@@ -74,7 +73,7 @@ static void print_item_info(t_item *item, int *paddings)
             printf("%*s ", paddings[3], item->minor_s_major);
         else
             printf("%*d ", paddings[3], item->size);
-        printf("%-12s ", item->time);
+        printf("%12s ", item->time);
     }
         printf("%s", item->name);
         printf("\n");
@@ -89,18 +88,18 @@ void print_folder(t_folder *folder)
     ilist = folder->item_list;
 
     paddings = get_paddings(ilist);
-    if (folder->folder == 0)
-        return ;
     if (ft_strcmp(folder->path, g_path))
-        printf("\n%s%s\n", g_root, get_folder_name(folder->path));
-    if (folder->item_list == NULL)
-        return ;
+        printf("\n%s\n", folder->path);
     if (ft_strchr(g_flags, 'l'))
         printf("total %d\n", folder->total);
-    while (ilist)
+    if (ilist != NULL)
     {
+        while (ilist)
+        {
             item = ilist->content;
-            print_item_info(item, paddings);
+            print_item_info(item, folder->total, paddings);
             ilist = ilist->next;
+        }
     }
 }
+
