@@ -11,95 +11,111 @@
 /* ************************************************************************** */
 
 #include "ft_ls.h"
-#include <stdio.h>
 
 char *g_flags;
 char *g_path;
+char *g_root;
 
-void size_padding(t_item *item, int *paddings)
+void		size_padding(t_item *item, int *paddings)
 {
-    int temp;
+	int		temp;
+    char    *temp_num;
 
+    if ((temp = item->n_link) > paddings[0])
+    {
+        temp_num = ft_itoa(temp);
+        paddings[0] = (int)ft_strlen(temp_num);
+        free(temp_num);
+    }
+        if ((temp = (int)ft_strlen(item->o_name)) > paddings[1])
+            paddings[1] = temp;
+	if ((temp = (int)ft_strlen(item->g_name)) > paddings[2])
+            paddings[2] = temp;
+	temp_num = ft_itoa(item->size);
     if (!ft_strcmp(item->type, "b") || !ft_strcmp(item->type, "c"))
-    {
-        temp = (int) (ft_strlen(item->minor_s_major));
-        if (temp > paddings[3])
-            paddings[3] = temp;
-    }
-    else
-    if ((temp = (int) ft_strlen(ft_itoa(item->size))) > paddings[3])
-        paddings[3] = temp;
-
-
+	{
+		temp = (int)(ft_strlen(item->m_s_m));
+		if (temp > paddings[3])
+			paddings[3] = temp;
+	}
+	else if ((temp = (int)ft_strlen(temp_num)) > paddings[3])
+		paddings[3] = temp;
+    free(temp_num);
 }
 
-static int *get_paddings(t_list *item_list)
+static int	*get_paddings(t_list *item_list)
 {
-    t_list *list;
-    t_item *item;
-    static int paddings[5];
-    int temp;
+	t_list		*list;
+	t_item		*item;
+	static int	paddings[5];
 
-        list = item_list;
-    if (ft_strchr(g_flags, 'l'))
-    {
-        while (list) {
-            item = list->content;
-            if (item->n_link > paddings[0])
-                paddings[0] = item->n_link;
-            if ((temp = (int) ft_strlen(item->o_name)) > paddings[1])
-                paddings[1] = temp;
-            if ((temp = (int) ft_strlen(item->g_name)) > paddings[2])
-                paddings[2] = temp;
-            size_padding(item, paddings);
-            list = list->next;
-        }
-        paddings[0] = (int) ft_strlen(ft_itoa(paddings[0]));
-    }
-    return paddings;
+	list = item_list;
+	if (ft_strchr(g_flags, 'l'))
+	{
+		while (list)
+		{
+			item = list->content;
+			size_padding(item, paddings);
+			list = list->next;
+		}
+	}
+	return (paddings);
 }
 
-static void print_item_info(t_item *item, int total, int *paddings)
+static void	print_item_info(t_item *item, int *paddings)
 {
+    int o_pad;
+    int g_pad;
+
+    o_pad = paddings[1] - ft_strlen(item->o_name) + 1;
+    g_pad = paddings[2] - ft_strlen(item->g_name) + 1;
     if (ft_strchr(g_flags, 'l'))
-    {
-        printf("%1s",  item->type);
-        printf("%9s",   item->perm);
-        printf("%1s ", item->x_atr);
-        printf("%*d ", paddings[0], item->n_link);
-        printf("%*s  ", paddings[1], item->o_name);
-        printf("%*s  ", paddings[2], item->g_name);
+	{
+		ft_printf("%1s", item->type);
+		ft_printf("%9s", item->perm);
+		ft_printf("%1s ", item->x_atr);
+        ft_printf("%*d ",  paddings[0], item->n_link);
+        while (o_pad-- < 0)
+            ft_printf(" ");
+        ft_printf("%s  ",  item->o_name);
+        while (g_pad-- < 0)
+            ft_printf(" ");
+        ft_printf("%s  ", item->g_name);
         if (!ft_strcmp(item->type, "b") || !ft_strcmp(item->type, "c"))
-            printf("%*s ", paddings[3], item->minor_s_major);
-        else
-            printf("%*d ", paddings[3], item->size);
-        printf("%12s ", item->time);
-    }
-        printf("%s", item->name);
-        printf("\n");
+			ft_printf("%*s ", paddings[3], item->m_s_m);
+		else
+			ft_printf("%*d ", paddings[3], item->size);
+		ft_printf("%-12s ", item->time);
+	}
+	ft_printf("%s\n", item->name);
 }
 
-
-void print_folder(t_folder *folder)
+int			print_folder(t_folder *folder)
 {
-    t_item *item;
-    t_list *ilist;
-    int *paddings;
-    ilist = folder->item_list;
+	t_item	*item;
+	t_list	*ilist;
+	int		*paddings;
 
-    paddings = get_paddings(ilist);
-    if (ft_strcmp(folder->path, g_path))
-        printf("\n%s\n", folder->path);
-    if (ft_strchr(g_flags, 'l'))
-        printf("total %d\n", folder->total);
-    if (ilist != NULL)
+	ilist = folder->item_list;
+	paddings = get_paddings(ilist);
+	if (folder->folder == 0)
+		return (0);
+	if (ft_strcmp(folder->path, g_path))
+		ft_printf("\n%s%s\n", g_root, get_folder_name(folder->path));
+	if (folder->item_list == NULL)
+		return (1);
+	if (ft_strchr(g_flags, 'l'))
+		ft_printf("total %d\n", folder->total);
+    while (ilist)
     {
-        while (ilist)
+        item = ilist->content;
+        if (!ft_strchr(g_flags, 'a') && item->name[0] == '.')
         {
-            item = ilist->content;
-            print_item_info(item, folder->total, paddings);
             ilist = ilist->next;
+            continue ;
         }
+            print_item_info(item, paddings);
+        ilist = ilist->next;
     }
+    return (1);
 }
-

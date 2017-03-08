@@ -14,94 +14,85 @@
 
 char *g_flags;
 
-static void order(t_list *elem)
+static void	order(t_list *elem, t_list *next)
 {
-    t_item *item;
-    t_item *next;
+	t_item *item;
 
-    item = elem->content;
-    if (elem->next)
-    next = elem->next->content;
-    else
-        return ;
-    if (ft_strcmp(item->name, next->name) > 0)
-    {
-        elem->content = next;
-        elem->next->content = item;
-    }
+	if (ft_strcmp(((t_item*)elem->content)->name,
+		((t_item*)next->content)->name) > 0)
+	{
+		item = elem->content;
+		elem->content = next->content;
+		next->content = item;
+	}
 }
 
-static void rev_order(t_list *elem)
+static void	time_order(t_list *elem, t_list *next)
 {
-    t_item *item;
-    t_item *next;
+	t_item *item;
 
-    item = elem->content;
-    if (elem->next)
-    next = elem->next->content;
-    else
-        return ;
-    if (ft_strcmp(item->name, next->name) < 0)
-    {
-        elem->content = next;
-        elem->next->content = item;
-    }
+	if (((t_item*)elem->content)->stat.st_mtimespec.tv_sec <=
+			((t_item*)next->content)->stat.st_mtimespec.tv_sec)
+	{
+		if (((t_item*)elem->content)->stat.st_mtimespec.tv_sec ==
+			((t_item*)next->content)->stat.st_mtimespec.tv_sec)
+			if (((t_item*)elem->content)->stat.st_mtimespec.tv_nsec >
+				((t_item*)next->content)->stat.st_mtimespec.tv_nsec)
+				return ;
+		item = elem->content;
+		elem->content = next->content;
+		next->content = item;
+	}
 }
 
-static void time_order(t_list *elem)
+static void	time_creation_order(t_list *elem, t_list *next)
 {
-    t_item *item;
-    t_item *next;
+	t_item *item;
 
-    item = elem->content;
-    if (elem->next)
-    next = elem->next->content;
-    else
-        return ;
-    if (item->stat.st_mtimespec.tv_sec < next->stat.st_mtimespec.tv_sec)
-    {
-        elem->content = next;
-        elem->next->content = item;
-    }
+	if (((t_item*)elem->content)->stat.st_birthtimespec.tv_sec <=
+		((t_item*)next->content)->stat.st_birthtimespec.tv_sec)
+	{
+		if (((t_item*)elem->content)->stat.st_birthtimespec.tv_sec ==
+			((t_item*)next->content)->stat.st_birthtimespec.tv_sec)
+			if (((t_item*)elem->content)->stat.st_birthtimespec.tv_nsec >
+				((t_item*)next->content)->stat.st_birthtimespec.tv_nsec)
+				return ;
+		item = elem->content;
+		elem->content = next->content;
+		next->content = item;
+	}
 }
 
-static void time_creation_order(t_list *elem)
+static void	reverse(t_list **head_ref)
 {
-    t_item *item;
-    t_item *next;
+	t_list *prev;
+	t_list *current;
+	t_list *next;
 
-    item = elem->content;
-    if (elem->next)
-    next = elem->next->content;
-    else
-        return ;
-    if (item->stat.st_birthtimespec.tv_sec < next->stat.st_birthtimespec.tv_sec)
-    {
-        elem->content = next;
-        elem->next->content = item;
-    }
+	current = *head_ref;
+	prev = NULL;
+	while (current != NULL)
+	{
+		next = current->next;
+		current->next = prev;
+		prev = current;
+		current = next;
+	}
+	*head_ref = prev;
 }
 
-t_list *sort_list(t_list *begin)
+t_list		*sort_list(t_list *begin)
 {
-    void (*f)(t_list *elem);
-    t_list *temp;
-    if (ft_strchr(g_flags, 't'))
-        f = time_order;
-    else
-    if (ft_strchr(g_flags, 'r'))
-        f = rev_order;
-    else
-    if (ft_strchr(g_flags, 'U'))
-        f = time_creation_order;
-    else
-        f = order;
-    temp = begin;
-    if (temp != NULL)
-    while (temp->next != NULL)
-    {
-        ft_lstiter(begin, f);
-        temp = temp->next;
-    }
-    return begin;
+	if (begin != NULL)
+	{
+		if (ft_strchr(g_flags, 't'))
+			ft_lstsort(begin, time_order);
+		else if (ft_strchr(g_flags, 'z'))
+			ft_lstsort(begin, time_creation_order);
+		else
+			ft_lstsort(begin, order);
+		if (ft_strchr(g_flags, 'r'))
+			reverse(&begin);
+	}
+	return (begin);
 }

@@ -12,16 +12,74 @@
 
 #include "ft_ls.h"
 
-int if_dir_present(t_list *list)
-{
-    t_item *item;
+char		*g_path;
 
-    while (list)
+char		*get_folder_name(char *str)
+{
+	char	*temp;
+
+	temp = g_path;
+	while (temp && str)
+	{
+		if (*temp != *str)
+			return (str);
+		str++;
+		temp++;
+	}
+	return (0);
+}
+
+char		*get_root(char *str)
+{
+	char	*temp;
+	int		i;
+
+	temp = str;
+	i = 0;
+	while (*temp)
+	{
+		i++;
+		temp++;
+	}
+	while (*temp != '/' && i > 0)
+	{
+		temp--;
+		i--;
+	}
+	return (temp);
+}
+
+void free_folder(t_folder *folder)
+{
+    t_list *ilist;
+    t_item *item;
+    ilist = folder->item_list;
+    while (ilist)
     {
-        item = list->content;
-        if (ft_strcmp(item->type, "d"))
-            return (1);
-        list = list->next;
+        item = ilist->content;
+        free(item->path);
+        free(item->g_name);
+        free(item->name);
+        free(item->o_name);
+        free(item->perm);
+        free(item->time);
+        free(item->type);
+        free(item->x_atr);
+        free(item->m_s_m);
+        free(ilist->content);
+        free(ilist);
+        ilist = ilist->next;
     }
-    return (0);
+    free(folder->path);
+    closedir(folder->folder);
+    free(folder);
+}
+
+int			not_system(char *str)
+{
+    if (!ft_strcmp(".", str))
+        return (0);
+    if (!ft_strcmp("..", str))
+        return (0);
+    return (1);
 }
