@@ -49,37 +49,39 @@ char		*get_root(char *str)
 	return (temp);
 }
 
-void free_folder(t_folder *folder)
+void		free_folder(t_folder *folder)
 {
-    t_list *ilist;
-    t_item *item;
-    ilist = folder->item_list;
-    while (ilist)
-    {
-        item = ilist->content;
-        free(item->path);
-        free(item->g_name);
-        free(item->name);
-        free(item->o_name);
-        free(item->perm);
-        free(item->time);
-        free(item->type);
-        free(item->x_atr);
-        free(item->m_s_m);
-        free(ilist->content);
-        free(ilist);
-        ilist = ilist->next;
-    }
-    free(folder->path);
-    closedir(folder->folder);
-    free(folder);
+	t_list	*ilist;
+	t_item	*item;
+
+	ilist = folder->item_list;
+	while (ilist)
+	{
+		item = ilist->content;
+		free(item->path);
+		free(item->g_name);
+		free(item->name);
+		free(item->o_name);
+		free(item->perm);
+		free(item->time);
+		free(item->type);
+		free(item->x_atr);
+		free(item->m_s_m);
+		free(ilist->content);
+		free(ilist);
+		ilist = ilist->next;
+	}
+	free(folder->path);
+	if (folder->folder != NULL)
+		closedir(folder->folder);
+	free(folder);
 }
 
 int			not_system(char *str)
 {
-    if (!ft_strcmp(".", str))
-        return (0);
-    if (!ft_strcmp("..", str))
-        return (0);
-    return (1);
+	if (!ft_strcmp(".", str))
+		return (0);
+	if (!ft_strcmp("..", str))
+		return (0);
+	return (1);
 }
