@@ -10,7 +10,7 @@
 #                                                                              #
 #******************************************************************************#
 
-CC = gcc
+CC = gcc -Wall -Wextra -Werror
 
 
 NAME = ft_ls
@@ -20,18 +20,19 @@ FT_LS_SRC = ft_ls.c print.c sort.c util.c get_info.c parse_param.c \
 
 OBJECTS = $(subst .c,.o,$(FT_LS_SRC))
 
+$(NAME): $(OBJECTS)
+	@make -C libft/
+	gcc $(OBJECTS) -o $(NAME) libft/libftprintf.a
+
+
 all: $(NAME)
 
-$(NAME):
-	make -C libft
-	gcc -o $(NAME) $(FT_LS_SRC) libft/*.o
-
-clean:
-	make clean -C libft
-	rm -f OBJECTS
+clean: 
+	@make -C libft/ clean
+	rm -rf $(OBJECTS)
 
 fclean: clean
-	make fclean -C libft
-	rm -f $(NAME)
+	@make -C libft/ fclean
+	rm -rf $(NAME) $(OBJECTS)
 
 re: fclean all
