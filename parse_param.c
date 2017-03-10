@@ -45,9 +45,8 @@ t_list		*concat(int argc, char **argv)
 		while (i < argc)
 		{
 			if (argv[i][0] != '-')
-			{
-				ft_lstadd(&arg_list, ft_lstnew(argv[i], sizeof(char) * ft_strlen(argv[i])));
-			}
+				ft_lstadd(&arg_list, ft_lstnew(argv[i], sizeof(char) *
+					ft_strlen(argv[i]) + 1));
 			else
 				g_flags = ft_append(g_flags, argv[i], ft_strlen(g_flags),
 					ft_strlen(argv[i]));
