@@ -51,7 +51,6 @@ typedef struct		s_folder
 
 t_list				*parse_folder(t_folder *folder_s);
 t_list				*sort_list(t_list *begin);
-
 int					print_folder_info(char *path);
 int					print_folder(t_folder *folder);
 t_list				*concat(int argc, char **argv);
@@ -65,7 +64,6 @@ char				*get_modif_time(struct stat item_inf);
 char				*get_folder_name(char *str);
 char				*get_root(char *str);
 void				free_folder(t_folder *f_foder);
-int			not_system(char *str);
-
+int					not_system(char *str);
 
 #endif

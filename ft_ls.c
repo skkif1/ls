@@ -35,10 +35,9 @@ int				main(int argc, char **argv)
 		}
 		closedir(folder);
 		print_folder_info(g_path);
-        free(arg_list->content);
-        free(arg_list);
+		free(arg_list->content);
+		free(arg_list);
 		arg_list = arg_list->next;
 	}
-        free(g_flags);
-    //sleep(5);
+	free(g_flags);
 }
